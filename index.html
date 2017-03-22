@@ -8,15 +8,15 @@
   </head>
   <body>
 <h1>DCC104- Exemplo 01</h1>
-<canvas width="800" height="800"></canvas>
+<canvas width="800" height="400"></canvas>
 <script>
 var eCanvas =
 document.getElementsByTagName("canvas")[0];
 var ctx = eCanvas.getContext("2d");
 
 var azul = new Sprite();
-
-
+var acelerando = false;
+var fuel =100;
 var fps = 60;
 var atual = new Date();
 var anterior = new Date();
@@ -32,11 +32,17 @@ function desenha(){
   azul.x += 10*dt;
   ctx.fillStyle = "darkgreen";
   ctx.fillText("dt: "+dt+"fps:"+Math.floor(1/dt), 10, 10);
-
+  if(acelerando){
+    fuel = fuel - 5*dt;
+  }
 azul.mover(dt);
 azul.desenhar(ctx);
 desenhaVermelho(ctx);
 anterior = atual;
+
+ctx.fillStyle = "green";
+ctx.fillRect(20,20,fuel,5);
+ctx.strokeRect(20,20,20+fuel,5);
 }
 
 function desenhaAzul(ctx){
@@ -57,17 +63,24 @@ addEventListener("keydown", function(e)
 {
   console.log(e.keyCode);
   switch(e.keyCode){
+    case 32:
+    azul.vy = -80;
+    acelerando = true;
     case 37:
     azul.ax= -100;
+    acelerando = true;
     break;
     case 38:
     azul.ay= -100;
+    acelerando = true;
     break;
     case 39:
       azul.ax= +100;
+      acelerando = true;
       break;
       case 40:
       azul.ay= +100;
+      acelerando = true;
       break;
 
   }
@@ -79,19 +92,27 @@ addEventListener("keyup", function(e)
   switch(e.keyCode){
     case 37:
     azul.ax= -100;
+    acelerando = false;
     break;
     case 38:
     azul.ay= -100;
+    acelerando = false;
     break;
     case 39:
       azul.ax= +100;
+      acelerando = false;
       break;
       case 40:
       azul.ay= +100;
+      acelerando = false;
       break;
 
   }
 })
+
+
+
+
 </script>
   </body>
 </html>
