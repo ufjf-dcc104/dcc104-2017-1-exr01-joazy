@@ -2,117 +2,129 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>DCC104 - Exemplo 01</title>
-    <script src="Sprite.js"
-    charset="utf-8"></script>
+    <title>DCC104 - Exemplo 02</title>
+    <script src="Sprite.js" charset="utf-8"></script>
+    <script src="Level.js" charset="utf-8"></script>
   </head>
   <body>
-<h1>DCC104- Exemplo 01</h1>
-<canvas width="800" height="400"></canvas>
-<script>
-var eCanvas =
-document.getElementsByTagName("canvas")[0];
-var ctx = eCanvas.getContext("2d");
+    <h1>DCC104 - Exemplo 02</h1>
+    <canvas width="700" height="300"> </canvas>
+    <script>
 
-var azul = new Sprite();
-var acelerando = false;
-var fuel =100;
-var fps = 60;
-var atual = new Date();
-var anterior = new Date();
-var dt = 1/fps;
+      var eCanvas = document.getElementsByTagName("canvas")[0];
+      var ctx = eCanvas.getContext("2d");
+      eCanvas.style
 
-desenha();
 
-function desenha(){
-  requestAnimationFrame(desenha);
-  atual = new Date();
-  dt = (atual - anterior)/1000;
-  ctx.clearRect(0,0,eCanvas.width, eCanvas.height)
-  azul.x += 10*dt;
-  ctx.fillStyle = "darkgreen";
-  ctx.fillText("dt: "+dt+"fps:"+Math.floor(1/dt), 10, 10);
-  if(acelerando){
-    fuel = fuel - 5*dt;
-  }
-azul.mover(dt);
-azul.desenhar(ctx);
-desenhaVermelho(ctx);
-anterior = atual;
 
-ctx.fillStyle = "green";
-ctx.fillRect(20,20,fuel,5);
-ctx.strokeRect(20,20,20+fuel,5);
-}
+      var fps = 120;
+      var atual = new Date();
+      var anterior = new Date();
+      var dt = 1/fps;
 
-function desenhaAzul(ctx){
-ctx.fillStyle = "blue";
-ctx.fillRect(azul.x,azul.y,15,15);
-ctx.lineWidth = 2;
-ctx.strokeRect(azul.x,azul.y,15,15);
-}
+      var azul = new Sprite();
+      var bloco = new Sprite();
+      bloco.x = 350;
+      bloco.y = 250;
+      azul.x = 350;
+      azul.y = 150;
+      bloco.color = "black"
+      var fuel = 100;
+      var acelerandoX = false;
+      var acelerandoY = false;
+      var level = new Level();
+      level.init();
 
-function desenhaVermelho(ctx){
-ctx.fillStyle = "red";
-ctx.fillRect(50,50,15,15);
-ctx.lineWidth = 2;
-ctx.strokeRect(50,50,15,15);
-}
-
-addEventListener("keydown", function(e)
-{
-  console.log(e.keyCode);
-  switch(e.keyCode){
-    case 32:
-    azul.vy = -80;
-    acelerando = true;
-    case 37:
-    azul.ax= -100;
-    acelerando = true;
-    break;
-    case 38:
-    azul.ay= -100;
-    acelerando = true;
-    break;
-    case 39:
-      azul.ax= +100;
-      acelerando = true;
-      break;
-      case 40:
-      azul.ay= +100;
-      acelerando = true;
-      break;
-
-  }
-})
-
-addEventListener("keyup", function(e)
-{
-  console.log(e.keyCode);
-  switch(e.keyCode){
-    case 37:
-    azul.ax= -100;
-    acelerando = false;
-    break;
-    case 38:
-    azul.ay= -100;
-    acelerando = false;
-    break;
-    case 39:
-      azul.ax= +100;
-      acelerando = false;
-      break;
-      case 40:
-      azul.ay= +100;
-      acelerando = false;
-      break;
-
-  }
-})
+      desenha();
 
 
 
 
-</script>
+      function desenha(){
+        requestAnimationFrame(desenha);
+        atual = new Date();
+        dt = (atual - anterior)/1000;
+        ctx.clearRect(0,0,eCanvas.width, eCanvas.height)
+        ctx.strokeRect(0,0,eCanvas.width, eCanvas.height)
+        ctx.fillStyle = "darkgreen";
+        ctx.fillText("dt: "+dt+" fps:"+Math.floor(1/dt)+"x:"+azul.x, 10, 10);
+
+
+        level.perseguirAng(azul,dt);
+        azul.moverAng(dt);
+        level.moverAng(dt);
+
+        level.colidiuCom(azul,
+          function(inimigo, alvo){
+            inimigo.color = "red";
+          }
+        );
+
+
+
+        azul.desenhar(ctx);
+        bloco.desenharBloco(ctx);
+        azul.colidiuComBorda();
+        level.desenhar(ctx);
+        level.colidiuComTiros();
+        if(azul.colidiuCom(bloco))
+        {
+          azul.colidindo();
+        }
+
+        anterior = atual;
+      }
+
+
+
+      addEventListener("keydown", function(e){
+        if(fuel<=0) return;
+        switch (e.keyCode) {
+          case 32:
+            level.fire(azul);
+            break;
+
+          case 37:
+            azul.vang = -100;
+            break;
+          case 38:
+            azul.am = 50;
+            break;
+          case 39:
+            azul.vang = +100;
+            break;
+          case 40:
+            azul.am = -50;
+            break;
+          default:
+
+        }
+      });
+
+
+      addEventListener("keyup", function(e){
+        switch (e.keyCode) {
+          case 37:
+            azul.vang = 0;
+            break;
+          case 38:
+            azul.am = 0;
+            break;
+          case 39:
+            azul.vang = 0;
+            break;
+          case 40:
+            azul.am = 0;
+            break;
+          default:
+
+        }
+      });
+
+    </script>
   </body>
+
+
+
+
 </html>
